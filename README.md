@@ -7,7 +7,7 @@
  ## Design Patterns Used:
 
   <li>Singleton</li>
-  <li>State</li>
+  <li>State (Highly Dominant) </li>
   <li>Observer</li>
 
  ## Gameplay Video
