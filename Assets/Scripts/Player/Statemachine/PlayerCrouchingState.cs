@@ -40,7 +40,7 @@ namespace Player.Statemachine
             if (horizontal != 0)
             {
                 if(!controller.Animator.GetCurrentAnimatorStateInfo(0).IsName("CrouchWalk")) controller.Animator.Play("CrouchWalk");
-                float crouchWalkProgress = Mathf.Abs(controller.rb.velocity.x) / controller.maxCrouchingVelocity;
+                float crouchWalkProgress = Mathf.Abs(controller.rb.linearVelocity.x) / controller.maxCrouchingVelocity;
                 controller.Animator.SetFloat("crouchWalkSpeed",crouchWalkProgress);
             }
             else

@@ -23,6 +23,7 @@ namespace Player.Statemachine
         AttackOne,
         AttackTwo,
         Hurt,
-        CrouchAttack
+        CrouchAttack,
+        Dead
     }
 }

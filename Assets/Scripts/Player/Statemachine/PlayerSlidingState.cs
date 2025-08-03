@@ -29,7 +29,7 @@ namespace Player.Statemachine
         {
             if (!controller.playerInput.actions["Crouch"].IsPressed())
             {
-                controller.rb.velocity = Vector2.zero; 
+                controller.rb.linearVelocity = Vector2.zero; 
                 if (controller.standUpCollisionChecker.IsColliding)
                 {
                     controller.ChangeState(EPlayerState.Crouching);
@@ -47,7 +47,7 @@ namespace Player.Statemachine
             {
                 controller.ChangeState(EPlayerState.Falling);
             }
-            else if (Mathf.Abs(controller.rb.velocity.x) < controller.SlideStoppingSpeed)
+            else if (Mathf.Abs(controller.rb.linearVelocity.x) < controller.SlideStoppingSpeed)
             {
                 if(controller.playerInput.actions["Crouch"].IsPressed()) controller.ChangeState(EPlayerState.Crouching);
                 else if (!controller.standUpCollisionChecker.IsColliding)

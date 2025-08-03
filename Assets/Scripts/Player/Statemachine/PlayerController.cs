@@ -140,6 +140,7 @@ namespace Skullknight.Player.Statemachine
             states.Add(EPlayerState.CrouchAttack, new PlayerCrouchingAttackState(this));
             states.Add(EPlayerState.AttackOne, new PlayerAttackingState(this,"atk0",.33f,0.33f,EPlayerState.AttackTwo));
             states.Add(EPlayerState.AttackTwo, new PlayerAttackingState(this,"atk1",.33f,0.33f,null));
+            states.Add(EPlayerState.Dead, new PlayerDeadState(this));
             
             ChangeState(EPlayerState.Idle);
             GameManager.Instance.OnStateChange.AddListener(OnGameStateChanged);
@@ -175,13 +176,13 @@ namespace Skullknight.Player.Statemachine
         public void Roll()
         {
             m_stamina -= 50;
-            rb.velocity = Vector2.right * (playerInput.actions["Horizontal"].ReadValue<float>() * rollingVelocity);
+            rb.linearVelocity = Vector2.right * (playerInput.actions["Horizontal"].ReadValue<float>() * rollingVelocity);
             OnRoll?.Invoke();
         }
         public void MoveOnGround(float inputAxis)
         {
             float ACCELERATION = 1f;
-            float diffToMaxVel = inputAxis * maxRunningVelocity - rb.velocity.x;
+            float diffToMaxVel = inputAxis * maxRunningVelocity - rb.linearVelocity.x;
             float fixedAcceleration = Mathf.Clamp(diffToMaxVel, -ACCELERATION, ACCELERATION);
             ActiveBoxCollider2D.sharedMaterial = normalPhysicMaterial;
             if (inputAxis > 0) SetFlip(false);
@@ -190,7 +191,7 @@ namespace Skullknight.Player.Statemachine
         }
         public void Airstrafe(float inputAxis)
         {
-            float diffToMaxVel = inputAxis * m_maxAirstrafingVelocity - rb.velocity.x;
+            float diffToMaxVel = inputAxis * m_maxAirstrafingVelocity - rb.linearVelocity.x;
             float fixedAcceleration = Mathf.Clamp(diffToMaxVel, -m_airstrafingAcceleration, m_airstrafingAcceleration);
             ActiveBoxCollider2D.sharedMaterial = normalPhysicMaterial;
             if (inputAxis == 1f) SetFlip(false);
@@ -242,22 +243,30 @@ namespace Skullknight.Player.Statemachine
 
         public void JumpCut()
         {
-            rb.AddForce(Vector2.down * (rb.velocity.y * m_jumpCutPercentage),ForceMode2D.Impulse);
+            rb.AddForce(Vector2.down * (rb.linearVelocity.y * m_jumpCutPercentage),ForceMode2D.Impulse);
         }
 
         public override bool TakeDamage(int amount)
         {
-            if (stateEnum == EPlayerState.Hanging || stateEnum == EPlayerState.Climbing)
-            {
-                Unhang();
-            }
+            bool result = false;
             if (isDamageable)
             {
                 health = Mathf.Clamp(health - amount, 0, maxHealth);
                 onHealthChanged?.Invoke(health);
-                ChangeState(EPlayerState.Hurt);
+                
+                if (stateEnum == EPlayerState.Hanging)
+                {
+                    Unhang();
+                    ChangeState(EPlayerState.Hurt);
+                }
+                else
+                {
+                    ChangeState(EPlayerState.Hurt);
+                }
+
                 return true;
             }
+
             return false;
         }
         public void SwordAttack()
@@ -279,7 +288,7 @@ namespace Skullknight.Player.Statemachine
         {
             float ACCELERATION = .5f;
         
-            float diffToMaxVel = inputAxis * maxCrouchingVelocity - rb.velocity.x;
+            float diffToMaxVel = inputAxis * maxCrouchingVelocity - rb.linearVelocity.x;
             float fixedAcceleration = Mathf.Clamp(diffToMaxVel, -ACCELERATION, ACCELERATION);
             ActiveBoxCollider2D.sharedMaterial = normalPhysicMaterial;
             rb.AddForce(Vector2.right * fixedAcceleration,ForceMode2D.Impulse);
@@ -293,7 +302,7 @@ namespace Skullknight.Player.Statemachine
             hitInfo = Physics2D.BoxCast(hangCheckCollider.bounds.center,
                 hangCheckCollider.bounds.size,
                 0f,
-                rb.velocity,
+                rb.linearVelocity,
                 .1f,
                 hangMask);
             if (hitInfo.collider != null) return hitInfo.collider.GetComponent<IHangPoint>();
@@ -303,7 +312,7 @@ namespace Skullknight.Player.Statemachine
         public void Hang()
         {
             SetFlip(hangPoint.SpriteFlip);
-            rb.velocity = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
             rb.totalForce = Vector2.zero;
             rb.isKinematic = true;
             Physics2D.IgnoreCollision(standingCollider, hangPoint.HandCollider, true);
@@ -317,7 +326,7 @@ namespace Skullknight.Player.Statemachine
         {
             transform.position = hangPoint.ClimbPoint.position;
             rb.MovePosition(hangPoint.ClimbPoint.position);
-            rb.velocity = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
             transform.parent = null;
             rb.totalForce = Vector2.zero;
             rb.isKinematic = false;
@@ -328,8 +337,8 @@ namespace Skullknight.Player.Statemachine
 
         public void Groundslide()
         {
-            rb.AddForce( rb.velocity.x * SlidingSpeedScale * Vector2.right,ForceMode2D.Impulse);
-            rb.velocity = new Vector2(Mathf.Clamp(rb.velocity.x, -SlidingSpeedCap,SlidingSpeedCap), rb.velocity.y);
+            rb.AddForce( rb.linearVelocity.x * SlidingSpeedScale * Vector2.right,ForceMode2D.Impulse);
+            rb.linearVelocity = new Vector2(Mathf.Clamp(rb.linearVelocity.x, -SlidingSpeedCap,SlidingSpeedCap), rb.linearVelocity.y);
             if (groundSlideDeathCoroutine != null)
             {
                 StopCoroutine(groundSlideDeathCoroutine);
@@ -354,7 +363,7 @@ namespace Skullknight.Player.Statemachine
         }
         public void ResetVelocity()
         {
-            rb.velocity = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
         }
     }
 }

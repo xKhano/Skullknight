@@ -14,7 +14,7 @@ public class Fireball : MonoBehaviour
         Vector2 direction = target.position - transform.position;
         direction.Normalize();
         transform.right = direction;
-        rb.velocity = direction * velocity;
+        rb.linearVelocity = direction * velocity;
     }
     private void OnTriggerEnter2D(Collider2D target)
     {

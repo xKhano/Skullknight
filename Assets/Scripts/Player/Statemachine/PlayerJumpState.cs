@@ -34,7 +34,7 @@ namespace Player.Statemachine
             {
                 controller.ChangeState(EPlayerState.Idle);
             }
-            else if (controller.rb.velocity.y < 0)
+            else if (controller.rb.linearVelocity.y < 0)
             {
                 controller.ChangeState(EPlayerState.Falling);
             }

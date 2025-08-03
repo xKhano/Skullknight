@@ -25,9 +25,9 @@ namespace Player.Statemachine
         public override void StateFixedUpdate()
         {
             float horizontal = controller.playerInput.actions["Horizontal"].ReadValue<float>();
-            if (controller.rb.velocity.y < -controller.MaxFallingVelocity)
+            if (controller.rb.linearVelocity.y < -controller.MaxFallingVelocity)
             {
-                controller.rb.velocity = new Vector3(controller.rb.velocity.x, -controller.MaxFallingVelocity, 0f);
+                controller.rb.linearVelocity = new Vector3(controller.rb.linearVelocity.x, -controller.MaxFallingVelocity, 0f);
             }
             if (controller.groundCollisionChecker.IsColliding && controller.CanJump)
             {
@@ -36,7 +36,7 @@ namespace Player.Statemachine
             }
             else if (horizontal != 0)
             {
-                if (controller.rb.velocity.y > 0 && controller.wallSlideCheckDeathCoroutine == null)
+                if (controller.rb.linearVelocity.y > 0 && controller.wallSlideCheckDeathCoroutine == null)
                 {
                     RaycastHit2D wallcheck = Physics2D.BoxCast(
                         controller.wallCheckCollider.bounds.center,

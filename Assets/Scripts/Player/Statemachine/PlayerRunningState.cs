@@ -29,13 +29,13 @@ namespace Player.Statemachine
 
         public override void StateUpdate()
         {
-            float velocityProgress = Mathf.Abs(controller.rb.velocity.x) / controller.maxRunningVelocity;
+            float velocityProgress = Mathf.Abs(controller.rb.linearVelocity.x) / controller.maxRunningVelocity;
         
             controller.RegenerateStamina();
             
             if (controller.playerInput.actions["Crouch"].IsPressed())
             {
-                if(Mathf.Abs(controller.rb.velocity.x) > controller.SlidingSpeed) controller.ChangeState(EPlayerState.Sliding);
+                if(Mathf.Abs(controller.rb.linearVelocity.x) > controller.SlidingSpeed) controller.ChangeState(EPlayerState.Sliding);
                 else
                 {
                     controller.ChangeState(EPlayerState.Crouching);

@@ -110,7 +110,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   velocity: 15
-  damage: 10
+  damage: 1
   rb: {fileID: 9123212815932190930}
   hitMask:
     serializedVersion: 2

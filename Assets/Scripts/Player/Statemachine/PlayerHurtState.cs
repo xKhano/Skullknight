@@ -29,11 +29,18 @@ namespace Skullknight.Player.Statemachine
             controller.bumpImpulse.GenerateImpulse();
             yield return new WaitForSeconds(duration);
             Time.timeScale = 1;
-            controller.Animator.Play("Getup");
-            yield return null;
-            yield return new WaitUntil(()=> controller.Animator.GetCurrentAnimatorStateInfo(0).normalizedTime > .95f);
-            controller.StartCoroutine(InvincibilityDuration(2.5f));
-            controller.ChangeState(EPlayerState.Idle);
+            if (controller.Health > 0)
+            {
+                controller.Animator.Play("Getup");
+                yield return null;
+                yield return new WaitUntil(()=> controller.Animator.GetCurrentAnimatorStateInfo(0).normalizedTime > .95f);
+                controller.StartCoroutine(InvincibilityDuration(2.5f));
+                controller.ChangeState(EPlayerState.Idle);
+            }
+            else
+            {
+                controller.ChangeState(EPlayerState.Dead);
+            }
         }
 
         private IEnumerator InvincibilityDuration(float duration)

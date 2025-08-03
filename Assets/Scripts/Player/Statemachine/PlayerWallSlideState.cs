@@ -44,14 +44,14 @@ namespace Player.Statemachine
 
         private void OnJumpPerformed(InputAction.CallbackContext obj)
         {
-            if (controller.rb.velocity.y > 0)
+            if (controller.rb.linearVelocity.y > 0)
             {
                 Vector2 vel = controller.SpriteRenderer.flipX ? Vector2.left : Vector2.right;
                 vel *= controller.maxRunningVelocity;
                 vel += Vector2.up * controller.wallJumpForce;
-                controller.rb.velocity = vel;
+                controller.rb.linearVelocity = vel;
             }
-            else controller.rb.velocity = new Vector2(controller.SpriteRenderer.flipX ? -controller.maxRunningVelocity : controller.maxRunningVelocity,controller.jumpVelocity);
+            else controller.rb.linearVelocity = new Vector2(controller.SpriteRenderer.flipX ? -controller.maxRunningVelocity : controller.maxRunningVelocity,controller.jumpVelocity);
 
             controller.wallSlideCheckDeathCoroutine = controller.StartCoroutine(WallslideDeath());
             controller.ChangeState(EPlayerState.Falling);
@@ -66,13 +66,13 @@ namespace Player.Statemachine
         {
             controller.Animator.Play("WallSlide");
             controller.rb.constraints =  controller.rb.constraints ^ RigidbodyConstraints2D.FreezePositionX;
-            if (controller.rb.velocity.y < 0)
+            if (controller.rb.linearVelocity.y < 0)
             {
-                controller.rb.velocity = Vector2.down * controller.rb.velocity.magnitude;
+                controller.rb.linearVelocity = Vector2.down * controller.rb.linearVelocity.magnitude;
             }
             else
             {
-                controller.rb.velocity = Vector2.up * controller.rb.velocity.magnitude;
+                controller.rb.linearVelocity = Vector2.up * controller.rb.linearVelocity.magnitude;
             }
         }
 
