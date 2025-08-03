@@ -2,12 +2,14 @@
 # Skullknight
 <img alt="Unity" src="https://img.shields.io/badge/Unity-000?style=for-the-badge&logo=unity&logoColor=white" style="margin:5px" />
 
- A 2D Soulslike, parkour game where you're a knight, trying to find and kill a skull demon boss.
+ A 2D Soulslike, parkour game where you're a knight, trying to find and kill a skull demon boss.<br>
+ See the itch.io page for the final product: https://khano.itch.io/skullknight
+ 
  
  ## Design Patterns Used:
 
   <li>Singleton</li>
-  <li>State</li>
+  <li>State (Highly Dominant) </li>
   <li>Observer</li>
 
  ## Gameplay Video
